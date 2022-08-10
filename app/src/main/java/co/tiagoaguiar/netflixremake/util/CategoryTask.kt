@@ -1,5 +1,7 @@
 package co.tiagoaguiar.netflixremake.util
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import co.tiagoaguiar.netflixremake.model.Category
 import co.tiagoaguiar.netflixremake.model.Movie
@@ -13,9 +15,18 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
 
-class CategoryTask {
+class CategoryTask(private val callback: Callback) {
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    interface Callback {
+        fun onPreExecute()
+        fun onResult(categories: List<Category>)
+        fun onFailure(message: String)
+    }
 
     fun execute(url: String) {
+        callback.onPreExecute()
         val executor = Executors.newSingleThreadExecutor()
 
         executor.execute {
@@ -47,8 +58,17 @@ class CategoryTask {
 
                 val categories = toCategories(jsonAsString)
 
+                handler.post {
+                    // aqui roda novamente dentro da UI thread
+                    callback.onResult(categories)
+                }
+
             } catch (e: IOException) {
-                Log.e("test", e.message ?: "Erro desconhecido", e)
+                val message = e.message ?: "Erro desconhecido"
+                Log.e("test", message, e)
+                handler.post {
+                    callback.onFailure(message)
+                }
             } finally {
                 urlConnection?.disconnect()
                 stream?.close()
