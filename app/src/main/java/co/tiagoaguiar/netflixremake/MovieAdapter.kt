@@ -13,7 +13,8 @@ import com.squareup.picasso.Picasso
 
 class MovieAdapter(
     private val movies: List<Movie>,
-    @LayoutRes private val layoutId: Int
+    @LayoutRes private val layoutId: Int,
+    private val onItemClickListener: ((Int) -> Unit)? = null
 ) :
     RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
 
@@ -34,6 +35,9 @@ class MovieAdapter(
     inner class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(movie: Movie) {
             val imageCover: ImageView = itemView.findViewById(R.id.img_cover)
+            imageCover.setOnClickListener {
+                onItemClickListener?.invoke(movie.id)
+            }
 
             DownloadImageTask(object : DownloadImageTask.Callback {
                 override fun onResult(bitmap: Bitmap) {
