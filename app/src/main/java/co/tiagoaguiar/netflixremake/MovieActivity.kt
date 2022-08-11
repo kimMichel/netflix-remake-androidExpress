@@ -44,7 +44,8 @@ class MovieActivity : AppCompatActivity() {
 
         // Geralmente utilizamos o ContextCompat (e damos preferência) quando trabalhamos com desenháveis.
         // busquei o desenhavel (layer-list)
-        val layerDrawable: LayerDrawable = ContextCompat.getDrawable(this, R.drawable.shadows) as LayerDrawable
+        val layerDrawable: LayerDrawable =
+            ContextCompat.getDrawable(this, R.drawable.shadows) as LayerDrawable
 
         // busquei o filme que eu quero
         val movieCover = ContextCompat.getDrawable(this, R.drawable.movie_4)
@@ -58,4 +59,11 @@ class MovieActivity : AppCompatActivity() {
 
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
 }
